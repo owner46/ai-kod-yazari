@@ -22,18 +22,27 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install React Native CLI
+        run: npm install -g @react-native-community/cli
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+      - name: Create React Native project
+        run: |
+          npx react-native@0.73.6 init AiKodYazari --version 0.73.6 --skip-install
+          cp App.tsx AiKodYazari/App.tsx
+          cd AiKodYazari
+          npm install
 
       - name: Build APK
         run: |
-          cd android
+          cd AiKodYazari/android
           chmod +x gradlew
           ./gradlew assembleRelease
 
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: ai-kod-yazari
+          path: AiKodYazari/android/app/build/outputs/apk/release/*.apk
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
